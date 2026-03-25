@@ -89,3 +89,19 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+// ✅ ADMIN: Get all users
+export const getUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .select("-otp -otpExpires") // 🔐 hide sensitive fields
+      .sort({ createdAt: -1 });
+
+    res.json(users);
+  } catch (err) {
+    console.error("Get Users Error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

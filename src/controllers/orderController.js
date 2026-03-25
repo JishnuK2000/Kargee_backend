@@ -71,9 +71,10 @@ export const getOrderById = async (req, res) => {
 // ✅ UPDATE ORDER STATUS (Admin)
 export const updateOrderStatus = async (req, res) => {
   try {
+    console.log(req.body,"????????????????????????")
     const updated = await Order.findByIdAndUpdate(
       req.params.id,
-      { orderStatus: req.body.orderStatus },
+      { status: req.body.status },
       { new: true }
     );
     res.json(updated);
