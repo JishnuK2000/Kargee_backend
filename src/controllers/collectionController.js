@@ -6,6 +6,7 @@ export const addCollection = async (req, res) => {
   try {
     const { name } = req.body;
 
+    // check duplicate
     const existing = await Collection.findOne({ name });
     if (existing) {
       return res.status(400).json({ message: "Collection already exists" });
@@ -25,6 +26,22 @@ export const getCollections = async (req, res) => {
   try {
     const collections = await Collection.find().sort({ createdAt: -1 });
     res.json(collections);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// ✅ Delete Collection
+export const deleteCollection = async (req, res) => {
+  try {
+    const deleted = await Collection.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Collection not found" });
+    }
+
+    res.json({ message: "Collection deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

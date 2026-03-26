@@ -5,6 +5,9 @@ export const createOrder = async (req, res) => {
   try {
     const { products, address, paymentMethod } = req.body;
 
+    // 🔐 Get user from token
+    const userId = req.user._id;
+
     // Validation
     if (!products || !Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
@@ -27,14 +30,15 @@ export const createOrder = async (req, res) => {
       return res.status(400).json({ message: "Invalid Indian phone number" });
     }
 
-    // Calculate totalAmount using discountPrice if available
+    // 💰 Calculate total
     const totalAmount = products.reduce(
       (sum, p) => sum + (p.discountPrice || p.price) * p.quantity,
       0
     );
 
-    // Create order
+    // 🧾 Create order with user
     const order = await Order.create({
+      user: userId, // 🔥 IMPORTANT
       products,
       address,
       paymentMethod,

@@ -2,16 +2,18 @@ import express from "express";
 import {
   addCollection,
   getCollections,
+  deleteCollection,
 } from "../../controllers/collectionController.js";
 
 import authMiddleware from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// 👤 PUBLIC ROUTE
-router.get("/", getCollections); // get all collections
+// PUBLIC
+router.get("/", getCollections);
 
-// 🛠️ ADMIN ROUTE
-router.post("/", authMiddleware, addCollection); // add collection
+// ADMIN
+router.post("/", authMiddleware, addCollection);
+router.delete("/:id", authMiddleware, deleteCollection);
 
 export default router;

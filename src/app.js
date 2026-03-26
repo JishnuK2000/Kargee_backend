@@ -14,10 +14,10 @@ import userOrderRoutes from "./routes/user/orderRoutes.js";
 import adminOrderRoutes from "./routes/admin/orderRoutes.js";
 import userAuthRoutes from "./routes/user/authRoutes.js";
 import userRoutes from "./routes/admin/userRoute.js"
+import cartRoutes from "./routes/user/cartRoutes.js"
 connectDB();
 
 const app = express();
-app.use(express.json());
 app.use(cors());
 app.use(express.json());
 
@@ -26,13 +26,13 @@ app.use("/api/user", userAuthRoutes);
 
 app.use("/api/products", userProductRoutes);
 app.use("/api/orders", userOrderRoutes);
+app.use("/api/cart", cartRoutes);
 
 // 🛠️ ADMIN ROUTES
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/collections", collectionRoutes);
-app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/users", userRoutes);
 
