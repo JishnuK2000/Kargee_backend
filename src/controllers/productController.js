@@ -55,7 +55,26 @@ export const addProduct = async (req, res) => {
 // ✅ 2. GET ALL PRODUCTS
 export const getProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const { category, collectionName, minPrice, maxPrice } = req.query;
+
+    // Build the filter query object
+    let query = {};
+
+    if (category) {
+      query.category = category; // Match single category (exact match)
+    }
+
+    if (collectionName) {
+      query.collectionName = collectionName;
+    }
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    const products = await Product.find(query).sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });

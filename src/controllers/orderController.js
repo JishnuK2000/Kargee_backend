@@ -33,7 +33,7 @@ export const createOrder = async (req, res) => {
     // 💰 Calculate total
     const totalAmount = products.reduce(
       (sum, p) => sum + (p.discountPrice || p.price) * p.quantity,
-      0
+      0,
     );
 
     // 🧾 Create order with user
@@ -52,6 +52,22 @@ export const createOrder = async (req, res) => {
   }
 };
 
+export const getOrdersByUserId = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.params.userId })
+      .sort({ createdAt: -1 })
+      .populate("user", "name mobile"); // optional
+
+    if (!orders.length) {
+      return res.status(404).json({ message: "No orders found for this user" });
+    }
+
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // ✅ GET ALL ORDERS (Admin)
 export const getOrders = async (req, res) => {
   try {
@@ -65,7 +81,14 @@ export const getOrders = async (req, res) => {
 // ✅ GET SINGLE ORDER
 export const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id)
+      .populate("user", "name mobile ") // 👈 select fields you want
+      .lean();
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
     res.json(order);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -75,11 +98,11 @@ export const getOrderById = async (req, res) => {
 // ✅ UPDATE ORDER STATUS (Admin)
 export const updateOrderStatus = async (req, res) => {
   try {
-    console.log(req.body,"????????????????????????")
+    console.log(req.body, "????????????????????????");
     const updated = await Order.findByIdAndUpdate(
       req.params.id,
       { status: req.body.status },
-      { new: true }
+      { new: true },
     );
     res.json(updated);
   } catch (err) {
