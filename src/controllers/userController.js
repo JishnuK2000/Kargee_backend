@@ -5,7 +5,7 @@ import { JWT_SECRET, JWT_REFRESH_SECRET } from "../config/env.js";
 
 // Generate Access Token (Short-lived)
 const generateAccessToken = (userId) =>
-  jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: "1h" });
+  jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: "1m" });
 
 // Generate Refresh Token (Long-lived)
 const generateRefreshToken = (userId) =>

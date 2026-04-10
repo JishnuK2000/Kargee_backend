@@ -76,7 +76,14 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-
+    isBestSeller: {
+      type: Boolean,
+      default: false,
+    },
+    isTrending: {
+      type: Boolean,
+      default: false,
+    },
     dateAdded: {
       type: Date,
       default: Date.now,
