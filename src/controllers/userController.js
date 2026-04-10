@@ -1,11 +1,15 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config/env.js";
+import { JWT_SECRET, JWT_REFRESH_SECRET } from "../config/env.js";
 
-// Generate JWT
-const generateToken = (userId) =>
-  jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: "7d" });
+// Generate Access Token (Short-lived)
+const generateAccessToken = (userId) =>
+  jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: "1h" });
+
+// Generate Refresh Token (Long-lived)
+const generateRefreshToken = (userId) =>
+  jwt.sign({ id: userId }, JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
 // Send OTP
 // export const sendOtp = async (req, res) => {
@@ -61,12 +65,15 @@ export const verifyOtp = async (req, res) => {
     const validOtp = await bcrypt.compare(otp, user.otp);
     if (!validOtp) return res.status(400).json({ message: "Invalid OTP" });
 
-    const token = generateToken(user._id);
+    const accessToken = generateAccessToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
     user.otp = null;
     user.otpExpires = null;
+    user.refreshToken = refreshToken;
     await user.save();
 
-    res.json({ token, user });
+    res.json({ accessToken, refreshToken, user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -87,6 +94,27 @@ export const updateProfile = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Refresh Token Controller
+export const refreshToken = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(401).json({ message: "Refresh token required" });
+
+    const decoded = jwt.verify(token, JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user || user.refreshToken !== token) {
+      return res.status(403).json({ message: "Invalid refresh token" });
+    }
+
+    const accessToken = generateAccessToken(user._id);
+    res.json({ accessToken });
+  } catch (err) {
+    console.error("Refresh Token Error:", err);
+    res.status(403).json({ message: "Expired or invalid refresh token" });
   }
 };
 

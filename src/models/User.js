@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   otp: { type: String },            // for OTP login
   otpExpires: { type: Date },       // OTP expiry
+  refreshToken: { type: String },    // for refreshing access token
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);

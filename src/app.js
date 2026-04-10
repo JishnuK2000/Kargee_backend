@@ -18,6 +18,8 @@ import cartRoutes from "./routes/user/cartRoutes.js"
 import reviewRoutes from "./routes/user/reviewRoutes.js"
 import supportRoutes from "./routes/user/supportRoutes.js"
 import adminSupportRoutes from "./routes/admin/adminSupportRoutes.js"
+import homeRoutes from "./routes/user/homeRoutes.js"
+import adminHomeRoutes from "./routes/admin/adminHomeRoutes.js"
 connectDB();
 
 const app = express();
@@ -32,6 +34,7 @@ app.use("/api/orders", userOrderRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/support", supportRoutes);
+app.use("/api/home", homeRoutes);
 
 // 🛠️ ADMIN ROUTES
 app.use("/api/admin/auth", adminAuthRoutes);
@@ -41,6 +44,7 @@ app.use("/api/collections", collectionRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/users", userRoutes);
 app.use("/api/admin/support", adminSupportRoutes);
+app.use("/api/admin/home", adminHomeRoutes);
 
 
 
