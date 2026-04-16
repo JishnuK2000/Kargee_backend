@@ -3,6 +3,7 @@ import {
   addReview,
   getProductReviews,
   getUserReviews,
+  getAllReviews,
 } from "../../controllers/reviewController.js";
 import protect from "../../middleware/userAuthMiddleware.js";
 
@@ -16,5 +17,8 @@ router.post("/", protect, addReview);
 
 // 👤 PROTECTED -> Get user's own reviews
 router.get("/my-reviews", protect, getUserReviews);
+
+// 👤 PUBLIC -> Get all reviews (for testimonials)
+router.get("/", getAllReviews);
 
 export default router;

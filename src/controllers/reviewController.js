@@ -100,3 +100,18 @@ export const getUserReviews = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+// ✅ GET ALL REVIEWS (Public - For Home Page Testimonials)
+export const getAllReviews = async (req, res) => {
+  try {
+    // Fetch latest 10 reviews with high ratings (optional filter)
+    const reviews = await Review.find({ rating: { $gte: 4 } })
+      .populate("user", "name")
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.json({ reviews });
+  } catch (error) {
+    console.error("Get All Reviews Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
